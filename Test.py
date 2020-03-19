@@ -76,20 +76,18 @@ def main():
     selection = Selection.truncation_scheme
 
     params = {
-        "target_func": target_func,
-        "crossing": crossing,
-        "mutation": mutation,
-        "selection": selection,
-        "generation": gen,
-        "n_descendants": N_DESCENDANTS,
         "n_iters": N_ITERS,
         "early_stopping_rounds": EARLY_STOPPING_ROUNDS,
         "eps": EPS,
-        "verbose": 1,
+        "verbose": 0,
+        "plot_history": False
     }
 
-    ga = GeneticAlgorithm(**params)
-    ext, x = ga.compute()
+    ga = GeneticAlgorithm(**params).fit(target_func=target_func,
+                                        crossing=crossing,
+                                        mutation=mutation,
+                                        selection=selection)
+    ext, x = ga.compute(gen, N_DESCENDANTS)
 
     # Scale x from [0, 2**N_CHROMOS] to [START, END]
     x *= END
@@ -106,5 +104,5 @@ def main():
     print("X coordinate: ", x)
 
 
-plot()
+# plot()
 main()
