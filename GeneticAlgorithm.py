@@ -26,20 +26,18 @@ class GeneticAlgorithm:
         self.selection = None
 
     def create_next_generation(self, generation, n_descendants):
-        had_child = np.zeros(len(generation))
         new_generation = []  # Array for new individuals
         n_pairs = n_descendants // 2
-        n = len(generation)
+        participants = list(range(len(generation)))
 
         for i in range(n_pairs):
             # Select individuals that were not crossed
-            k, m = Utils.get_random_from_bounds(0, n - 1)
-            while had_child[k] == 1 or had_child[m] == 1:
-                k, m = Utils.get_random_from_bounds(0, n - 1)
-
-            had_child[k] = 1
-            had_child[m] = 1
+            k, m = Utils.get_random_from_array(participants)
             x, y = generation[k], generation[m]
+
+            # Remove selected individuals from crossing process
+            participants.remove(k)
+            participants.remove(m)
 
             # two new individuals
             a, b = self.crossing(x, y)
@@ -141,6 +139,8 @@ class GeneticAlgorithm:
                 if iter_woi == self.early_stopping_rounds:
                     print("Early stopping. Iteration number:", i)
                     break
+            else:
+                iter_woi = 0
 
             prev_max_value = max_value
 

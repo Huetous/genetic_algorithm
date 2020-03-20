@@ -6,7 +6,7 @@ from Utils import Utils
 class Selection:
     """
     Method: Random Scheme
-    Randomly deletes n_descendants individuals from given generation
+    Randomly removes n_descendants individuals from given generation
     """
     @staticmethod
     def random_scheme(target_func, generation, n_descendants):
@@ -19,7 +19,7 @@ class Selection:
 
     """
     Method: Roulette Scheme
-    Deletes n_descendants individuals from given generation as follows:
+    Removes n_descendants individuals from given generation as follows:
     1) Find sum of target values of all generation
     2) Check if value of particular individual is lying within [a,b],
         where a,b - two random points from [0, 2Pi]
@@ -51,6 +51,13 @@ class Selection:
                 deleted += 1
         return generation
 
+    """
+    Method: Tournament Scheme
+    Removes n_descendants individuals from given generation as follows:
+    1) Select two individuals
+    2) Compare them by target function
+    3) Remove one with lower target function value
+    """
     @staticmethod
     def tournament_scheme(target_func, generation, n_descendants):
         n = len(generation)
@@ -69,13 +76,17 @@ class Selection:
 
         return generation
 
+    """
+    Method: Truncation Scheme
+    Removes n_descendants individuals from given generation as follows:
+    1) Sort individuals in generation by target function values
+    2) Remove last n_descendants individuals
+    """
     @staticmethod
     def truncation_scheme(target_func, generation, n_descendants):
         # Sort by decreasing absolute target function value
         generation.sort(key=lambda x: abs(target_func(x)), reverse=True)
 
         # Cut off last n_descendants individuals
-        for i in range(n_descendants):
-            n = len(generation)
-            del generation[n - 1]
-        return generation
+        return generation[:len(generation) - n_descendants]
+
