@@ -99,7 +99,7 @@ def main():
         "early_stopping_rounds": EARLY_STOPPING_ROUNDS,
         "eps": EPS,
         "verbose": 0,
-        "plot_history": False
+        "get_history": False
     }
 
     ga = GeneticAlgorithm(**params).fit(target_func=target_func,
@@ -109,16 +109,16 @@ def main():
     result = ga.compute(gen, N_DESCENDANTS)
 
     # Scale x from [0, 2**N_CHROMOSOME] to [START, END]
-    result['max_value_index'] *= END
-    result['max_value_index'] /= 2 ** N_CHROMOSOME - 1
+    result['coordinate'] *= END
+    result['coordinate'] /= 2 ** N_CHROMOSOME - 1
 
     # Find real extremum and coordinate at which it is reached
     real, real_ind = get_real_ext()
 
     print("Real extremum value:", real)
-    print("Value found by algorithm: ", result['max_value'])
-    print("Error: ", abs(real - result['max_value']))
-    print("X coordinate: ", result['max_value_index'])
+    print("Value found by algorithm: ", result['extremum'])
+    print("Error: ", abs(real - result['extremum']))
+    print("X coordinate: ", result['coordinate'])
 
     # Plot max value from each iteration
     if result.get('history_y'):
