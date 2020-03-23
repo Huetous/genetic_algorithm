@@ -106,20 +106,29 @@ def main():
                                         crossing=crossing,
                                         mutation=mutation,
                                         selection=selection)
-    ext, x = ga.compute(gen, N_DESCENDANTS)
+    result = ga.compute(gen, N_DESCENDANTS)
 
     # Scale x from [0, 2**N_CHROMOSOME] to [START, END]
-    x *= END
-    x /= 2 ** N_CHROMOSOME - 1
+    result['max_value_index'] *= END
+    result['max_value_index'] /= 2 ** N_CHROMOSOME - 1
 
     # Find real extremum and coordinate at which it is reached
     real, real_ind = get_real_ext()
 
     print("Real extremum value:", real)
-    print("Value found by algorithm: ", ext)
-    print("Error: ", abs(real - ext))
-    print("X coordinate: ", x)
+    print("Value found by algorithm: ", result['max_value'])
+    print("Error: ", abs(real - result['max_value']))
+    print("X coordinate: ", result['max_value_index'])
 
-
+    # Plot max value from each iteration
+    if result.get('history_y'):
+        plt.plot(result['history_y'])
+        plt.xlabel("Iteration Number")
+        plt.ylabel("Target function value")
+        plt.show()
+        plt.plot(result['history_x'])
+        plt.xlabel("Iteration Number")
+        plt.ylabel("X coordinate")
+        plt.show()
 # plot()
 main()

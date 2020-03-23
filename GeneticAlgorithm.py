@@ -96,15 +96,16 @@ class GeneticAlgorithm:
         if n_descendants > len(generation):
             print("Parameter <n_descendants> must be less than len(generation).\n")
 
+        result = {}
         if self.plot_history:
-            history_y = []  # Array for max target function value on each iteration
-            history_x = []  # Array for max target function value coordinate on each iteration
+            result['history_y'] = []  # Array for max target function value on each iteration
+            result['history_x'] = []  # Array for max target function value coordinate on each iteration
 
         prev_max_value = 0  # Max target function value from previous iteration
         iter_woi = 0  # Count for iterations without improvement
 
-        max_value = 0  # Max target function value
-        max_value_index = 0  # X coordinate on which max target function value is reached
+        result['max_value'] = 0  # Max target function value
+        result['max_value_index'] = 0  # X coordinate on which max target function value is reached
 
         for i in range(self.n_iters):
             # NEW GENERATION
@@ -126,15 +127,15 @@ class GeneticAlgorithm:
             size = len(generation)
             for j in range(size):
                 cached = self.target_func(generation[j])
-                if abs(cached) > abs(max_value):
-                    max_value = cached
-                    max_value_index = Utils.binary_to_decimal(generation[j])
+                if abs(cached) > abs(result['max_value']):
+                    result['max_value'] = cached
+                    result['max_value_index'] = Utils.binary_to_decimal(generation[j])
 
             if self.verbose > 0:
-                print(f"Iteration:\t{i}\tValue:\t{max_value}")
+                print(f"Iteration:\t{i}\tValue:\t{result['max_value']}")
 
             # Check if there are any improvements
-            if abs(prev_max_value - max_value) < self.eps:
+            if abs(prev_max_value - result['max_value']) < self.eps:
                 iter_woi += 1
                 if iter_woi == self.early_stopping_rounds:
                     print("Early stopping. Iteration number:", i)
@@ -142,21 +143,15 @@ class GeneticAlgorithm:
             else:
                 iter_woi = 0
 
-            prev_max_value = max_value
+            prev_max_value = result['max_value']
 
             if self.plot_history:
-                history_y.append(max_value)
-                history_x.append(Utils.binary_to_decimal(generation[max_value_index]))
+                history_y.append(result['max_value'])
+                history_x.append(Utils.binary_to_decimal(generation[result['max_value_index']]))
         if self.verbose > 0:
             print("-" * 40)
 
         if self.plot_history:
-            plt.plot(history_y)
-            plt.xlabel("Iteration Number")
-            plt.ylabel("Target function value")
-            plt.show()
-            plt.plot(history_x)
-            plt.xlabel("Iteration Number")
-            plt.ylabel("X coordinate")
-            plt.show()
-        return max_value, max_value_index
+            result['history_x'] = history_x
+            result['history_y'] = history_y
+        return result
